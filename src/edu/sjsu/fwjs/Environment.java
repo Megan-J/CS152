@@ -27,8 +27,21 @@ public class Environment {
      * null is returned (similar to how JS returns undefined.
      */
     public Value resolveVar(String varName) {
-        // YOUR CODE HERE
-        return null;
+
+        // creating a local environment
+        Environment locEnv = new Environment(this);
+
+        // have to cycle through scopes starting with local
+        while((locEnv != null) && (locEnv.env.get(varName) == null)){
+            locEnv = locEnv.outerEnv;
+        }
+
+        if(locEnv == null){
+            return new NullVal();
+        }
+        else {
+            return locEnv.env.get(varName);
+        }
     }
 
     /**
@@ -37,7 +50,19 @@ public class Environment {
      * or any of the function's outer scopes, the var is stored in the global scope.
      */
     public void updateVar(String key, Value v) {
-        // YOUR CODE HERE
+        // this is local scope
+        if(env.containsKey(key)) {
+            env.put(key, v);
+        }
+        // this is outer scope
+        else if(this.outerEnv != null && this.outerEnv.resolveVar(key) != null){
+            this.outerEnv.updateVar(key, v);
+
+        }
+        // global scope bc outEnv has to be null for global
+        else {
+            this.env.put(key, v);
+        }
     }
 
     /**
@@ -46,9 +71,9 @@ public class Environment {
      * a RuntimeException is thrown.
      */
     public void createVar(String key, Value v) {
-        if(env.containsKey(key)) {
+        if(this.env.containsKey(key)) {
           throw new RuntimeException("Variable has been defined in the current scope previously");
         }
-        env.put(key, v);
+        this.env.put(key, v);
     }
 }
