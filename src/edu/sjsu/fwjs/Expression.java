@@ -72,7 +72,56 @@ class BinOpExpr implements Expression {
 
     @SuppressWarnings("incomplete-switch")
     public Value evaluate(Environment env) {
-        // YOUR CODE HERE
+        Value v1 = e1.evaluate(env);
+        Value v2 = e2.evaluate(env);
+
+        String operation = op.toString();
+
+
+        int val1 = Integer.parseInt(v1.toString());
+        int val2 = Integer.parseInt(v2.toString());
+
+        if(operation.equals("ADD")){
+            int sum = val1+val2;
+            return new IntVal(sum);
+        }
+        else if(operation.equals("SUBTRACT")){
+            int diff = val1-val2;
+            return new IntVal(diff);
+        }
+        else if(operation.equals("MULTIPLY")){
+            int product = val1*val2;
+            return new IntVal(product);
+        }
+        else if(operation.equals("DIVIDE")){
+            int div = val1/val2;
+            return new IntVal(div);
+        }
+        else if(operation.equals("MOD")){
+            int mod = val1%val2;
+            return new IntVal(mod);
+        }
+        else if(operation.equals("GT")){
+            boolean gt = val1>val2;
+            return new BoolVal(gt);
+        }
+        else if(operation.equals("GE")){
+            boolean ge = val1>=val2;
+            return new BoolVal(ge);
+        }
+        else if(operation.equals("LT")){
+            boolean lt = val1<val2;
+            return new BoolVal(lt);
+        }
+        else if(operation.equals("LE")){
+            boolean le = val1<=val2;
+            return new BoolVal(le);
+        }
+        else if(operation.equals("EQ")){
+            boolean eq = val1==val2;
+            return new BoolVal(eq);
+        }
+
         return null;
     }
 }
