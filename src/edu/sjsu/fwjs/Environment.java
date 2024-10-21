@@ -46,6 +46,9 @@ public class Environment {
      * a RuntimeException is thrown.
      */
     public void createVar(String key, Value v) {
-        // YOUR CODE HERE
+        if(env.containsKey(key)) {
+          throw new RuntimeException("Variable has been defined in the current scope previously");
+        }
+        env.put(key, v);
     }
 }
