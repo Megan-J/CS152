@@ -172,7 +172,14 @@ class SeqExpr implements Expression {
         this.e2 = e2;
     }
     public Value evaluate(Environment env) {
-        // YOUR CODE HERE
+        // TODO: waiting on assign expression to be completed
+
+        Value v1 = e1.evaluate(env);
+        Value v2 = e2.evaluate(env);
+
+        System.out.println(v1);
+        System.out.println(v2);
+
         return null;
     }
 }
@@ -188,7 +195,7 @@ class VarDeclExpr implements Expression {
         this.exp = exp;
     }
     public Value evaluate(Environment env) {
-        // YOUR CODE HERE
+        // TODO: Waiting on seq expression to be completed
         return null;
     }
 }
@@ -238,7 +245,18 @@ class FunctionAppExpr implements Expression {
         this.args = args;
     }
     public Value evaluate(Environment env) {
-        // YOUR CODE HERE
+        // evaulating the first expression
+        Value v1 = f.evaluate(env);
+
+        // evaluating the other expressions
+        List<Value> evaluatedArgs = new ArrayList<>();
+        for(Expression x : args){
+            evaluatedArgs.add(x.evaluate(env));
+        }
+
+        // TODO: the rest of creating function app
+
+
         return null;
     }
 }
