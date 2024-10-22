@@ -140,8 +140,20 @@ class IfExpr implements Expression {
         this.els = els;
     }
     public Value evaluate(Environment env) {
-        // YOUR CODE HERE
-        return null;
+        Value condition = cond.evaluate(env);
+
+        // check if condition is boolean
+        if(condition instanceof BoolVal) {
+
+          // if condition is true, evaluate thn
+          if(((BoolVal)condition).toBoolean()) {
+            return thn.evaluate(env);
+          } else {  // if condition is false, evaluate els
+            return els.evaluate(env);
+          }
+        } else {
+          throw new RuntimeException("Condition must evaluate to a boolean");
+        }
     }
 }
 
@@ -156,8 +168,23 @@ class WhileExpr implements Expression {
         this.body = body;
     }
     public Value evaluate(Environment env) {
-        // YOUR CODE HERE
-        return null;
+      Value res = new NullVal();
+      while (true) {
+        Value condition = cond.evaluate(env);
+        
+        if(condition instanceof BoolVal) {
+          
+          // if condition is true, evaluate body
+          if(((BoolVal)condition).toBoolean()) {
+           res = body.evaluate(env);
+          } else {  // otherwise, break out of while loop
+            break;
+          }
+        } else {
+          throw new RuntimeException("Condition must evaluate to a boolean");
+        }
+      }
+      return res;
     }
 }
 
@@ -206,23 +233,23 @@ class VarDeclExpr implements Expression {
  * to the global scope.
  */
 class AssignExpr implements Expression {
-  private String varName;
-  private Expression e;
-  public AssignExpr(String varName, Expression e) {
-      this.varName = varName;
-      this.e = e;
-  }
-  public Value evaluate(Environment env) {
-      Value expRes = e.evaluate(env);
-      
-      // update existing var
-      if (env.resolveVar(varName) != null) {
-        env.updateVar(varName, expRes);
-      } else {  // add to global scope if var is not set
-        env.createVar(varName, expRes);
-      }
-      return expRes;
-  }
+    private String varName;
+    private Expression e;
+    public AssignExpr(String varName, Expression e) {
+        this.varName = varName;
+        this.e = e;
+    }
+    public Value evaluate(Environment env) {
+        Value expRes = e.evaluate(env);
+        
+        // update existing var
+        if (env.resolveVar(varName) != null) {
+          env.updateVar(varName, expRes);
+        } else {  // add to global scope if var is not set
+          env.createVar(varName, expRes);
+        }
+        return expRes;
+    }
 }
 
 /**
@@ -267,3 +294,4 @@ class FunctionAppExpr implements Expression {
         return null;
     }
 }
+
