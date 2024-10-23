@@ -75,54 +75,44 @@ class BinOpExpr implements Expression {
         Value v1 = e1.evaluate(env);
         Value v2 = e2.evaluate(env);
 
-        String operation = op.toString();
-
-
         int val1 = Integer.parseInt(v1.toString());
         int val2 = Integer.parseInt(v2.toString());
+        Value v = new NullVal();
 
-        if(operation.equals("ADD")){
-            int sum = val1+val2;
-            return new IntVal(sum);
-        }
-        else if(operation.equals("SUBTRACT")){
-            int diff = val1-val2;
-            return new IntVal(diff);
-        }
-        else if(operation.equals("MULTIPLY")){
-            int product = val1*val2;
-            return new IntVal(product);
-        }
-        else if(operation.equals("DIVIDE")){
-            int div = val1/val2;
-            return new IntVal(div);
-        }
-        else if(operation.equals("MOD")){
-            int mod = val1%val2;
-            return new IntVal(mod);
-        }
-        else if(operation.equals("GT")){
-            boolean gt = val1>val2;
-            return new BoolVal(gt);
-        }
-        else if(operation.equals("GE")){
-            boolean ge = val1>=val2;
-            return new BoolVal(ge);
-        }
-        else if(operation.equals("LT")){
-            boolean lt = val1<val2;
-            return new BoolVal(lt);
-        }
-        else if(operation.equals("LE")){
-            boolean le = val1<=val2;
-            return new BoolVal(le);
-        }
-        else if(operation.equals("EQ")){
-            boolean eq = val1==val2;
-            return new BoolVal(eq);
+        switch(op) {
+            case ADD:
+                v = new IntVal(val1+val2);
+                break;
+            case SUBTRACT:
+                v = new IntVal(val1-val2);
+                break;
+            case MULTIPLY:
+                v = new IntVal(val1*val2);
+                break;
+            case DIVIDE:
+                v = new IntVal(val1/val2);
+                break;
+            case MOD:
+                v = new IntVal(val1%val2);
+                break;
+            case GT:
+                v = new BoolVal(val1>val2);
+                break;
+            case GE:
+                v = new BoolVal(val1>=val2);
+                break;
+            case LT:
+                v = new BoolVal(val1<val2);
+                break;
+            case LE:
+                v = new BoolVal(val1<=val2);
+                break;
+            case EQ:
+                v = new BoolVal(val1==val2);
+                break;
         }
 
-        return null;
+        return v;
     }
 }
 
@@ -199,15 +189,12 @@ class SeqExpr implements Expression {
         this.e2 = e2;
     }
     public Value evaluate(Environment env) {
-        // TODO: waiting on assign expression to be completed
+        // evaluate the first expression
+         e1.evaluate(env);
 
-        Value v1 = e1.evaluate(env);
-        Value v2 = e2.evaluate(env);
-
-        System.out.println(v1);
-        System.out.println(v2);
-
-        return null;
+        // evaluate the second expression
+        // return the value of the second evaluated expression
+        return e2.evaluate(env);
     }
 }
 
@@ -222,8 +209,10 @@ class VarDeclExpr implements Expression {
         this.exp = exp;
     }
     public Value evaluate(Environment env) {
-        // TODO: Waiting on seq expression to be completed
-        return null;
+        Value value = exp.evaluate(env);
+        env.createVar(varName, value);
+
+        return value;
     }
 }
 
@@ -279,19 +268,18 @@ class FunctionAppExpr implements Expression {
         this.args = args;
     }
     public Value evaluate(Environment env) {
-        // evaulating the first expression
-        Value v1 = f.evaluate(env);
+        // evaluating the expression
+        Value v = this.f.evaluate(env);
 
         // evaluating the other expressions
         List<Value> evaluatedArgs = new ArrayList<>();
-        for(Expression x : args){
-            evaluatedArgs.add(x.evaluate(env));
+        for(Expression exp : args){
+            evaluatedArgs.add(exp.evaluate(env));
         }
 
-        // TODO: the rest of creating function app
+        ClosureVal closure = (ClosureVal) v;
 
-
-        return null;
+        return closure.apply(evaluatedArgs);
     }
 }
 

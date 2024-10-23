@@ -97,7 +97,7 @@ class ClosureVal implements Value {
       for (int i = 0; i < params.size(); i++) {
           newEnv.createVar(params.get(i), argVals.get(i));
       }
-      System.out.println("Body" + body.evaluate(newEnv));
+
       return body.evaluate(newEnv);
     }
 }
