@@ -19,18 +19,25 @@ NULL      : 'null'            ;
 // Symbols
 MUL       : '*' ;
 DIV       : '/' ;
+ADD       : '+' ;
+SUB       : '-' ;
+MOD       : '%' ;
+GT        : '>' ;
+LT        : '<' ;
+GE        : '>=' ;
+LE        : '<=' ;
+EQ        : '==' ;
 SEPARATOR : ';' ;
 
 // Identifiers/Variable names
 ASSIGN    : '=' ;
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 
-
 // Whitespace and comments
 NEWLINE   : '\r'? '\n' -> skip ;
 LINE_COMMENT  : '//' ~[\n\r]* -> skip ;
 WS            : [ \t]+ -> skip ; // ignore whitespace
-
+BLOCK_COMMENT : '/*' .*? '*/' -> skip ;
 
 // ***Parsing rules ***
 
