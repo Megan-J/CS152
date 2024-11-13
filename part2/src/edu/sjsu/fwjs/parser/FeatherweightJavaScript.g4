@@ -6,6 +6,10 @@ grammar FeatherweightJavaScript;
 // Reserved words
 IF        : 'if' ;
 ELSE      : 'else' ;
+WHILE     : 'while' ;
+FUNCTION  : 'function' ;
+VAR       : 'var' ;
+PRINT     : 'print' ;
 
 // Literals
 INT       : [1-9][0-9]* | '0' ;
@@ -40,4 +44,3 @@ expr: expr op=( '*' | '/' | '%' ) expr                  # MulDivMod
 block: '{' stat* '}'                                    # fullBlock
      | stat                                             # simpBlock
      ;
-
