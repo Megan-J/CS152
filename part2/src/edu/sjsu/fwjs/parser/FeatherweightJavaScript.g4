@@ -13,11 +13,17 @@ PRINT     : 'print' ;
 
 // Literals
 INT       : [1-9][0-9]* | '0' ;
+BOOL      : ('true' | 'false');
+NULL      : 'null'            ;
 
 // Symbols
 MUL       : '*' ;
 DIV       : '/' ;
 SEPARATOR : ';' ;
+
+// Identifiers/Variable names
+ASSIGN    : '=' ;
+IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 
 
 // Whitespace and comments
