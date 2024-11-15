@@ -61,11 +61,11 @@ expr: expr op=( '*' | '/' | '%' ) expr                  # MulDivMod
     | BOOL                                              # bool
     | NULL                                              # null
     | '(' expr ')'                                      # parens
-    | FUNCTION '(' params ')' block                     # funcDecl
-    | ID '(' args ')'                                   # funcApp
-    | VAR ID ASSIGN expr SEPARATOR                      # varDecl
+    | FUNCTION '(' params? ')' block                    # funcDecl
+    | ID '(' args? ')'                                  # funcApp
+    | VAR ID ASSIGN expr                                # varDecl
     | ID                                                # varRef
-    | ID ASSIGN expr SEPARATOR                          # varAssign
+    | ID ASSIGN expr                                    # varAssign
     ;
 
 /** Parameters for function declarations */
@@ -74,7 +74,7 @@ params: ID (',' ID)* ;
 /** Arguments for function applications */
 args: expr (',' expr)* ;
 
-block: '{' stat* '}'                                    # fullBlock
+block: '{' stat* expr? '}'                              # fullBlock
      | stat                                             # simpBlock
      ;
 
