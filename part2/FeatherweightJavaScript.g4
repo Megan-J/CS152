@@ -31,7 +31,7 @@ SEPARATOR : ';' ;
 
 // Identifiers/Variable names
 ASSIGN    : '=' ;
-IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
+ID: [a-zA-Z_][a-zA-Z0-9_]*;
 
 // Whitespace and comments
 NEWLINE   : '\r'? '\n' -> skip ;
@@ -44,21 +44,28 @@ BLOCK_COMMENT : '/*' .*? '*/' -> skip ;
 /** The start rule */
 prog: stat+ ;
 
+// Statements
 stat: expr SEPARATOR                                    # bareExpr
     | IF '(' expr ')' block ELSE block                  # ifThenElse
     | IF '(' expr ')' block                             # ifThen
     | PRINT '(' expr ')' SEPARATOR                      # print
+    | WHILE '(' expr ')' block                          # while
     | SEPARATOR                                         # emptyStmt
     ;
 
+// Expression
 expr: expr op=( '*' | '/' | '%' ) expr                  # MulDivMod
     | expr op=(ADD | SUB) expr                          # AddSub
     | expr op=(GT | LT | GE | LE | EQ) expr             # Comparison
     | INT                                               # int
+    | BOOL                                              # bool
+    | NULL                                              # null
     | '(' expr ')'                                      # parens
-    | FUNCTION '(' params ')' block                  # funcDecl
-    | ID '(' args ')'                                # funcApp
+    | FUNCTION '(' params ')' block                     # funcDecl
+    | ID '(' args ')'                                   # funcApp
     | VAR ID ASSIGN expr SEPARATOR                      # varDecl
+    | ID                                                # varRef
+    | ID ASSIGN expr SEPARATOR                          # varAssign
     ;
 
 /** Parameters for function declarations */
