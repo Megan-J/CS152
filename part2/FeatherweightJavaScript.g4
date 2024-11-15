@@ -47,13 +47,28 @@ prog: stat+ ;
 stat: expr SEPARATOR                                    # bareExpr
     | IF '(' expr ')' block ELSE block                  # ifThenElse
     | IF '(' expr ')' block                             # ifThen
+    | PRINT '(' expr ')' SEPARATOR                      # print
+    | SEPARATOR                                         # emptyStmt
     ;
 
 expr: expr op=( '*' | '/' | '%' ) expr                  # MulDivMod
+    | expr op=(ADD | SUB) expr                          # AddSub
+    | expr op=(GT | LT | GE | LE | EQ) expr             # Comparison
     | INT                                               # int
     | '(' expr ')'                                      # parens
+    | FUNCTION '(' params ')' block                  # funcDecl
+    | ID '(' args ')'                                # funcApp
+    | VAR ID ASSIGN expr SEPARATOR                      # varDecl
     ;
+
+/** Parameters for function declarations */
+params: ID (',' ID)* ;
+
+/** Arguments for function applications */
+args: expr (',' expr)* ;
 
 block: '{' stat* '}'                                    # fullBlock
      | stat                                             # simpBlock
      ;
+
+
