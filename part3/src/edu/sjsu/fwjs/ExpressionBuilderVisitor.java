@@ -35,12 +35,12 @@ public class ExpressionBuilderVisitor extends FeatherweightJavaScriptBaseVisitor
     public Expression visitFuncDecl(FeatherweightJavaScriptParser.FuncDeclContext ctx) {
         List<String> params = new ArrayList<>();
         // ctx.params
-        List<TerminalNode> nodes = ctx.params().ID();
-
-        for(int i=0; i<nodes.size(); i++){
+        if (ctx.params() != null && ctx.params().ID() != null) {
+          List<TerminalNode> nodes = ctx.params().ID();
+          for(int i=0; i<nodes.size(); i++){
             params.add(String.valueOf(nodes.get(i)));
-        }
-
+          }
+       }
         Expression body = visit(ctx.block());
         return new FunctionDeclExpr(params, body);
     }
@@ -48,14 +48,14 @@ public class ExpressionBuilderVisitor extends FeatherweightJavaScriptBaseVisitor
     @Override
     public Expression visitFuncApp(FeatherweightJavaScriptParser.FuncAppContext ctx) {
         Expression func = new VarExpr(ctx.ID().getText()); // Treat function name as variable reference
-        List<Expression> args = new ArrayList<>();
-        // ctx.args
-        List<ExprContext> contexts = ctx.args().expr();
+        List<Expression> args = new ArrayList<>(); // Initialize an empty ArrayList
+        if (ctx.args() != null) {
+          List<ExprContext> contexts = ctx.args().expr();
 
-        for(int i=0; i<contexts.size(); i++){
-            args.add(visit(contexts.get(i)));
+            for (int i=0; i<contexts.size(); i++) {
+              args.add(visit(contexts.get(i)));
+            }
         }
-
         return new FunctionAppExpr(func, args);
     }
 

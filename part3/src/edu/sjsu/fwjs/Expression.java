@@ -138,8 +138,10 @@ class IfExpr implements Expression {
           // if condition is true, evaluate thn
           if(((BoolVal)condition).toBoolean()) {
             return thn.evaluate(env);
-          } else {  // if condition is false, evaluate els
+          } else if(els != null) {  // if condition is false, evaluate els
             return els.evaluate(env);
+          } else {
+            return new NullVal();
           }
         } else {
           throw new RuntimeException("Condition must evaluate to a boolean");
