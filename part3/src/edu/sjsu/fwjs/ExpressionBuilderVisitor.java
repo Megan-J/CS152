@@ -48,12 +48,12 @@ public class ExpressionBuilderVisitor extends FeatherweightJavaScriptBaseVisitor
     @Override
     public Expression visitFuncApp(FeatherweightJavaScriptParser.FuncAppContext ctx) {
         Expression func = new VarExpr(ctx.ID().getText()); // Treat function name as variable reference
-        List<String> args = new ArrayList<>();
+        List<Expression> args = new ArrayList<>();
         // ctx.args
         List<ExprContext> contexts = ctx.args().expr();
 
         for(int i=0; i<contexts.size(); i++){
-            args.add(String.valueOf(contexts.get(i)));
+            args.add(visit(contexts.get(i)));
         }
 
         return new FunctionAppExpr(func, args);
