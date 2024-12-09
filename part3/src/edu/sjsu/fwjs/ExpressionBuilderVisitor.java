@@ -3,8 +3,10 @@ package edu.sjsu.fwjs;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.antlr.v4.runtime.tree.*;
 import edu.sjsu.fwjs.parser.FeatherweightJavaScriptBaseVisitor;
 import edu.sjsu.fwjs.parser.FeatherweightJavaScriptParser;
+import edu.sjsu.fwjs.parser.FeatherweightJavaScriptParser.*;
 
 public class ExpressionBuilderVisitor extends FeatherweightJavaScriptBaseVisitor<Expression>{
     @Override
@@ -31,7 +33,14 @@ public class ExpressionBuilderVisitor extends FeatherweightJavaScriptBaseVisitor
 
     @Override
     public Expression visitFuncDecl(FeatherweightJavaScriptParser.FuncDeclContext ctx) {
-        List<String> params = visitParams(ctx.params());
+        List<String> params = new ArrayList<>();
+        // ctx.params
+        List<TerminalNode> nodes = ctx.params().ID();
+
+        for(int i=0; i<nodes.size(); i++){
+            params.add(String.valueOf(nodes.get(i)));
+        }
+
         Expression body = visit(ctx.block());
         return new FunctionDeclExpr(params, body);
     }
@@ -39,7 +48,14 @@ public class ExpressionBuilderVisitor extends FeatherweightJavaScriptBaseVisitor
     @Override
     public Expression visitFuncApp(FeatherweightJavaScriptParser.FuncAppContext ctx) {
         Expression func = new VarExpr(ctx.ID().getText()); // Treat function name as variable reference
-        List<Expression> args = visitArgs(ctx.args());
+        List<String> args = new ArrayList<>();
+        // ctx.args
+        List<ExprContext> contexts = ctx.args().expr();
+
+        for(int i=0; i<contexts.size(); i++){
+            args.add(String.valueOf(contexts.get(i)));
+        }
+
         return new FunctionAppExpr(func, args);
     }
 
@@ -125,44 +141,24 @@ public class ExpressionBuilderVisitor extends FeatherweightJavaScriptBaseVisitor
         return new WhileExpr(cond, body);
     }
 
-    @Override public Expression visitVarRef(FeatherweightJavaScriptParser.VarRefContext ctx) {
+    @Override 
+    public Expression visitVarRef(FeatherweightJavaScriptParser.VarRefContext ctx) {
         return new VarExpr(String.valueOf(ctx.ID().getText()));
     }
 
-    @Override public Expression visitVarAssign(FeatherweightJavaScriptParser.VarAssignContext ctx) {
+    @Override 
+    public Expression visitVarAssign(FeatherweightJavaScriptParser.VarAssignContext ctx) {
         // varName, expression
          return new AssignExpr(ctx.ID().getText(), visit(ctx.expr()));
     }
 
-    @Override public Expression visitNull(FeatherweightJavaScriptParser.NullContext ctx) {
+    @Override 
+    public Expression visitNull(FeatherweightJavaScriptParser.NullContext ctx) {
          return new ValueExpr(new NullVal());
     }
 
-    @Override public Expression visitParams(FeatherweightJavaScriptParser.ParamsContext ctx) { 
-        List<String> params = new ArrayList<>();
-        List<TerminalNode> nodes = ctx.ID();
-
-        for(int i=0; i<nodes.size(); i++){
-            params.add(String.valueOf(nodes.get(i)));
-        }
-        
-        // TODO: FIX THE RETURN
-        return new ValueExpr(new NullVal());
-    }
-
-    @Override public Expression visitArgs(FeatherweightJavaScriptParser.ArgsContext ctx) { 
-        List<String> args = new ArrayList<>();
-        List<ExprContext> contexts = ctx.expr();
-
-        for(int i=0; i<contexts.size(); i++){
-            args.add(String.valueOf(contexts.get(i)));
-        }
-        
-        //TODO: FIX THE RETURN
-        return new ValueExpr(new NullVal());
-    }
-
-    @Override public Expression visitComparison(FeatherweightJavaScriptParser.ComparisonContext ctx) { 
+    @Override 
+    public Expression visitComparison(FeatherweightJavaScriptParser.ComparisonContext ctx) { 
         Expression expr1 = visit(ctx.expr(0));
         Expression expr2 = visit(ctx.expr(1));
         int operator = ctx.op.getType();
