@@ -2,7 +2,7 @@ package edu.sjsu.fwjs;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.stream.Collectors;
 /**
  * FWJS expressions.
  */
@@ -62,21 +62,33 @@ class PrintExpr implements Expression {
  */
 class BinOpExpr implements Expression {
     private Op op;
-    private Expression e1;
-    private Expression e2;
+    private List<Expression> exprs;
     public BinOpExpr(Op op, Expression e1, Expression e2) {
         this.op = op;
-        this.e1 = e1;
-        this.e2 = e2;
+        this.exprs = new ArrayList<Expression>();
+        this.exprs.add(e1);
+        this.exprs.add(e2);
     }
 
     @SuppressWarnings("incomplete-switch")
     public Value evaluate(Environment env) {
-        Value v1 = e1.evaluate(env);
-        Value v2 = e2.evaluate(env);
+        List<Value> list = this.exprs.stream().map(x -> x.evaluate(env)).collect(Collectors.toList());
+        // Convert bool, null, closure val to int to use for operation
+        List<Integer> vals = list.stream().map(
+                x -> {
+                    if (x instanceof BoolVal)
+                        return ((BoolVal) x).toBoolean() ? 1 : 0;
+                    else if (x instanceof NullVal)
+                        return 0;
+                    else if (x instanceof ClosureVal)
+                        return -1;
+                    return ((IntVal) x).toInt();
+                }
+        ).collect(Collectors.toList());
 
-        int val1 = Integer.parseInt(v1.toString());
-        int val2 = Integer.parseInt(v2.toString());
+
+        int val1 = vals.get(0);
+        int val2 = vals.get(1);
         Value v = new NullVal();
 
         switch(op) {

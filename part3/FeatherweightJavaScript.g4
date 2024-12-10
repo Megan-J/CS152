@@ -55,17 +55,17 @@ stat: expr SEPARATOR                                    # bareExpr
 
 // Expression
 expr: expr op=( '*' | '/' | '%' ) expr                  # MulDivMod
+    | '(' expr ')'                                      # parens
     | expr op=(ADD | SUB) expr                          # AddSub
     | expr op=(GT | LT | GE | LE | EQ) expr             # Comparison
-    | INT                                               # int
-    | BOOL                                              # bool
-    | NULL                                              # null
-    | '(' expr ')'                                      # parens
     | FUNCTION '(' params? ')' block                    # funcDecl
     | ID '(' args? ')'                                  # funcApp
     | VAR ID ASSIGN expr                                # varDecl
     | ID                                                # varRef
     | ID ASSIGN expr                                    # varAssign
+    | INT                                               # int
+    | BOOL                                              # bool
+    | NULL                                              # null
     ;
 
 /** Parameters for function declarations */
